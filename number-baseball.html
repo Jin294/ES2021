@@ -1,0 +1,75 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>숫자야구</title>
+</head>
+<body>
+<form id="form">
+  <input type="text" id="input">
+  <button>확인</button>
+</form>
+<div id="logs">!안내문! 어쩌구 저쩌구 이러쿵 저러쿵 <br><br></div>
+<script>
+  const $input = document.querySelector('#input');
+  const $form = document.querySelector('#form');
+  const $logs = document.querySelector('#logs');
+
+	const numbers = [];
+	for (let n=0; n<9; n+=1){ //0이상 9미만
+		numbers.push(n);
+	}
+	const answer = [];
+	for (let n=0; n<=3; n +=1) {// repeat 4 times
+		const index = Math.floor(Math.random() * numbers.length); // 0부터 9사이의 '정수'
+		answer.push(numbers[index]); // index에서 뽑힌 수를 answer 배열에 넣음
+		numbers.splice(index,1); // index에서 뽑힌 수를 numbers에서 제외함
+	}
+
+	const tries = [];
+	function checkInput(input){ // 검증
+		if (input.length !== 4) { //4글자인가
+			return alert('YOU HAVE TO ENTER 4 NUMBERS')	//alert는 undefined를 반환. 즉 return undefined와 같다.
+		};
+		if (new Set(input).size !== 4) { //중복된 숫자은 없는가
+			return alert('YOU HAVE TO ENTER 4 DIFFERENT NUMBERS')
+		};
+		if (tries.includes(input)) { // 이미 시도한 값은 아닌가
+			return alert('YOU ALREADY DID IT')	
+		};
+		return true; //통과하면 true 실패하면 false
+	}
+	$form.addEventListener('submit', (event) =>{
+		event.preventDefault(); // form에서 자동발생하는 새로고침 막아줌
+		const value = $input.value; //player가 입력한 값을 '문자열'로 저장함
+		$input.value = ''; // 입력 칸 비움
+		const valid = checkInput(value); // 저장된 값을 검증함
+		if (!valid) return;
+		if (answer.join('') === value) { // 정답을 문자열로 변환
+			$logs.textContent = '홈런!';
+			return;
+		}
+		if (tries.length >= 9){
+			const message = document.createTextNode(`패배! 정답은 ${answer.join('')}`); //join은 배열 요소를 결합해 문자열로 만듦
+			$logs.appendChild(message);
+			return;
+		}
+		// 몇 스트라이크 몇 볼인지 검사
+		let strike = 0;
+		let ball = 0;
+		for (let i = 0; i< answer.length; i++){
+			const index = value.indexOf(answer[i]) // indexof로 player값의 i번째의 유무 확인
+			if (index > -1) { // 일치하는 값이면
+				if (index === i) {//순서까지 동일
+					strike +=1;
+				} else {// 숫자만 같음
+					ball +=1;
+				}
+			}
+		}
+		$logs.append(`${value}: ${strike} 스트라이크 ${ball} 볼`, document.createElement('br'));
+		tries.push(value);
+	});
+	
+</script>
+</body>
+</html>
