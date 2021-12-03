@@ -35,11 +35,16 @@
 	const bonus = shuffle[6]; // shuffle의 제일 마지막 수를 보너스로
 	console.log(winBalls, bonus);
 	const $result = document.querySelector('#result');
-	setTimeout(()=>{
+	function drawBall(number, $parent){
 		const $ball = document.createElement('div');
 		$ball.className = 'ball';
-		$ball.textContent = winBalls[0];
-		$result.appendChild($ball);
-	}, 1000);
+		$ball.textContent = number;
+		$parent.appendChild($ball);
+	};
+	for (let i = 0; i<winBalls.length; i++) {
+		setTimeout(()=>{drawBall(winBalls[i], $result)}, 1000*(i+1));
+	}
+	const $bonus = document.querySelector('#bonus');
+	setTimeout(()=>{drawBall(bonus, $bonus)}, 1000*7);
 </script>
 </body>
