@@ -29,18 +29,26 @@
 <script>
   const $screen = document.querySelector('#screen');
   const $result = document.querySelector('#result');
+  let startTime;
+  let endTime;
 
   $screen.addEventListener('click', function () {
     if ($screen.classList.contains('waiting')) { // 대기 화면
 			$screen.classList.replace('waiting','ready');
 			$screen.textContent = 'click if screen is green';
-			setTimeout(function (){
-				$screen.classList.remove('ready');
+			setTimeout(function (){ // 일정 시간 이후에 한 번 실행
+        startTime = new Date();
+        $screen.classList.remove('ready');
 				$screen.classList.add('now');
 				$screen.textContent = 'click now!';
 			}, Math.floor(Math.random() * 1000) + 2000); // 2000 - 3000 사이의 수
     } else if ($screen.classList.contains('ready')) { // 준비 화면
     } else if ($screen.classList.contains('now')) { // 클릭 화면
+      endTime = new Date();
+      $result.textContent = `${endTime - startTime}ms`;
+      $screen.classList.remove('now');
+      $screen.classList.add('waiting');
+      $screen.textContent = 'click if you want restart!';
     }
   });
 </script>
