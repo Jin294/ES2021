@@ -37,13 +37,17 @@
     if ($screen.classList.contains('waiting')) { // 대기 화면
 			$screen.classList.replace('waiting','ready');
 			$screen.textContent = 'click if screen is green';
-			setTimeout(function (){ // 일정 시간 이후에 한 번 실행
+			timeoutId = setTimeout(function (){ // 일정 시간 이후에 한 번 실행
         startTime = new Date();
         $screen.classList.remove('ready');
 				$screen.classList.add('now');
 				$screen.textContent = 'click now!';
 			}, Math.floor(Math.random() * 1000) + 2000); // 2000 - 3000 사이의 수
     } else if ($screen.classList.contains('ready')) { // 준비 화면
+      clearTimeout(timeoutId);
+      $screen.classList.remove('ready');
+      $screen.classList.add('waiting');
+      $screen.textContent = 'too fast! take it easy!';
     } else if ($screen.classList.contains('now')) { // 클릭 화면
       endTime = new Date();
       const current = endTime - startTime;
