@@ -31,6 +31,7 @@
   const $result = document.querySelector('#result');
   let startTime;
   let endTime;
+  const records = [];
 
   $screen.addEventListener('click', function () {
     if ($screen.classList.contains('waiting')) { // 대기 화면
@@ -45,10 +46,15 @@
     } else if ($screen.classList.contains('ready')) { // 준비 화면
     } else if ($screen.classList.contains('now')) { // 클릭 화면
       endTime = new Date();
-      $result.textContent = `${endTime - startTime}ms`;
+      const current = endTime - startTime;
+      records.push(current); //records에 밀어넣기
+      const average = records.reduce((a, c) => a + c) / records.length;
+      $result.textContent = `현재 ${current}ms, 평균 ${average}ms`;
       $screen.classList.remove('now');
       $screen.classList.add('waiting');
       $screen.textContent = 'click if you want restart!';
+      startTime = '';
+      endTime = '';
     }
   });
 </script>
