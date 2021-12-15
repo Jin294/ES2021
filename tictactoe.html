@@ -4,14 +4,16 @@
 <meta charset="utf-8" />
 <title>틱택토</title>
 <style>
+	*{
+		font-size: 40px;
+	}
   table {
     border-collapse: collapse;
   }
-
   td {
-    border: 1px solid black;
-    width: 40px;
-    height: 40px;
+    border: 2px solid black;
+    width: 80px;
+    height: 80px;
     text-align: center;
   }
 </style>
@@ -22,18 +24,108 @@
 	const { body } = document; // const body = document.body; 구조분해 할당
   const $table = document.createElement('table');
   const $result = document.createElement('div'); // 결과창
-	const rows = [];
+	const rows = []; // 데이터용
+	let turn = 'O';
+	
+	// [
+	//   [td, td, td],
+	//   [td, td, td],
+	//   [td, td, td],
+	// ]
+
+	const checkWinner = (target) => {
+		let rowIndex;
+		let cellIndex;
+		rows.forEach((row, ri) => {
+			row.forEach((cell, ci) => {
+				if (cell === target) {
+					rowIndex = ri;
+					cellIndex = ci;
+				}
+			});
+		});
+		// 세 칸 다 채워졌나?
+		let hasWinner = false;
+		// 가로줄 검사
+		if (
+			rows[rowIndex][0].textContent === turn &&
+			rows[rowIndex][1].textContent === turn &&
+			rows[rowIndex][2].textContent === turn
+		) {
+			hasWinner = true;
+		}
+		// 세로줄 검사
+		if (
+			rows[0][cellIndex].textContent === turn &&
+			rows[1][cellIndex].textContent === turn &&
+			rows[2][cellIndex].textContent === turn
+		) {
+			hasWinner = true;
+		}
+		// 대각선 검사
+		if (
+			rows[0][0].textContent === turn &&
+			rows[1][1].textContent === turn &&
+			rows[2][2].textContent === turn
+		) {
+			hasWinner = true;
+		}
+		if (
+			rows[0][2].textContent === turn &&
+			rows[1][1].textContent === turn &&
+			rows[2][0].textContent === turn
+		) {
+			hasWinner = true;
+		}
+		return hasWinner;
+};
+	
+	const callback = (event) => {
+		if (event.target.textContent !=='' ) { // 타깃의 내용물이 채워져있다면
+			console.log('빈칸이 아닙니다.');
+		} else { //타깃이 빈칸이면
+			console.log('빈칸입니다.');
+			event.target.textContent = turn; // 클릭하면 빈칸을 turn으로 채워줌
+			// 승부 판단하기
+			if (checkWinner(event.target)){
+				$result.textContent = `${turn} is win`;
+				$table.removeEventListener('click', callback); // 승리하면 더 이상 작동 안되도록
+				return;
+			};
+
+			// 무승부 검사
+			let draw = true;
+			rows.forEach((row) => {
+				row.forEach((cell) => {
+					if (!cell.textContent) {
+						draw = false;
+					}
+				});
+			});
+			if (draw) {
+				$result.textContent = `무승부`;
+				return;
+			}
+			
+			if (turn ==='X'){ // 클릭하면 turn 값을 바꿔줌, X를 O로, O를 X로
+				turn = 'O';
+			} else {
+				turn = 'X';
+			}
+		}
+	};
 
 	for (let i = 1; i <= 3; i++) {
-		const $tr = document.createElement('tr');
-		const cells = [];
+		const $tr = document.createElement('tr'); // 행(가로) 태그 생성
+		const cells = []; // 데이터용
 		for (let j = 1; j <= 3; j++) {
-			const $td = document.createElement('td');
-			cells.push($td);
-			$tr.appendChild($td);
+			const $td = document.createElement('td'); // 열(세로) 태그 생성
+			cells.push($td); // 데이터용
+			$tr.appendChild($td); //tr 태그 안에 td 태그를 상속
 		}
-		rows.push(cells);
-		$table.appendChild($tr);
+		rows.push(cells); // 데이터용
+		$table.appendChild($tr); // table 태그 안에 1행 3열의 tr 태그를 상속
+		$table.addEventListener('click', callback);
 	}
 	body.appendChild($table);
 	body.appendChild($result);
