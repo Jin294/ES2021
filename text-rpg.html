@@ -69,16 +69,34 @@
 
   $startScreen.addEventListener('submit', (event) => {
     event.preventDefault();
-    const name = event.target['name-input'].value;
+    const name = event.target['name-input'].value; // 하이픈 있을때는 대괄호 사용해야함
     $startScreen.style.display = 'none';
-    $gameMenu.style.display = 'block';
-    $heroName.textContent = name;
+    $gameMenu.style.display = 'block'; // 처음에는 일반화면
+    $heroName.textContent = name; // 이름 받아서 넣음
     $heroLevel.textContent = '${hero.lev}Lev';
     $heroHp.textContent = 'HP: ${hero.hp}/${hero.maxHp}';
     $heroXp.textContent = 'XP: ${hero.xp}/${15 * hero.lev}';
     $heroAtt.textContent = 'ATT: ${hero.att}';
     hero.name = name;
   });
+
+  $gameMenu.addEventListener('submit', (event)=> {
+    event.preventDefault();
+    const input = event.target['menu-input'].value;
+    if (input ==='1'){
+      $gameMenu.style.display = 'none';
+      $battleMenu.style.display = 'block';
+      monster = JSON.parse(
+        JSON.stringify(monsterList[Math.floor(Math.random() * monsterList.length)])
+      ); // 참조 아닌 깊은 복사, 참조하면 원본 값이 변형될 우려 있음.
+      monster.maxHp = monster.hp;
+      $monsterName.textContent = monster.name;
+      $monsterHp.textContent = `HP: ${monster.hp}/${monster.maxHp}`;
+      $monsterAtt.textContent = `ATT: ${monster.att}`;
+    } else if (input === '2') {
+    } else if (input === '3') {
+  }
+});
 </script>
 </body>
 </html>
