@@ -59,6 +59,14 @@
     hp: 100,
     xp: 0,
     att: 10,
+    attack(monster) {
+      monster.hp -= this.att;
+      this.hp -= monster.att;
+    },
+    heal(monster) {
+      this.hp += 20;
+      this.hp -= monster.att;
+    },
   };
   let monster = null;
   const monsterList = [
@@ -66,7 +74,7 @@
     { name: '스켈레톤', hp: 50, att: 15, xp: 20 },
     { name: '마왕', hp: 150, att: 35, xp: 50 },
   ];
-
+  
   $startScreen.addEventListener('submit', (event) => {
     event.preventDefault();
     const name = event.target['name-input'].value; // 하이픈 있을때는 대괄호 사용해야함
@@ -95,8 +103,21 @@
       $monsterAtt.textContent = `ATT: ${monster.att}`;
     } else if (input === '2') {
     } else if (input === '3') {
-  }
-});
+    }
+  });
+  $battleMenu.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const input = event.target['battle-input'].value;
+    if (input === '1') {
+      hero.attack(monster);
+      monster.attack(hero);
+      $heroHp.textContent = `HP: ${hero.hp}/${hero.maxHp}`;
+      $monsterHp.textContent = `HP: ${monster.hp}/${monster.maxHp}`;
+      $message.textContent = `${hero.att}의 데미지를 주고, ${monster.att}의 데미지를 받았다.`;
+    } else if (input === '2') {
+    } else if (input === '3') {
+    }
+  });
 </script>
 </body>
 </html>
