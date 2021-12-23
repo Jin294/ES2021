@@ -55,7 +55,7 @@
   
   class Game {
     constructor(name){
-      this.monster - null;
+      this.monster = null;
       this.hero = null;
       this.monsterList = [
         { name: '슬라임', hp: 25, att: 10, xp: 10 },
@@ -91,6 +91,17 @@
       const input = event.target['menu-input'].value;
       if (input === '1') { // 모험
         this.changeScreen('battle');
+        const randomIndex = Math.floor(Math.random() * this.monsterList.length);
+        const randomMonster = this.monsterList[randomIndex];
+        this.monster = new Monster(
+          this,
+          randomMonster.name,
+          randomMonster.hp,
+          randomMonster.att,
+          randomMonster.xp,
+        );
+        this.updateMonsterStat();
+        this.showMessage(`몬스터와 마주쳤다. ${this.monster.name}인 것 같다!`);
       } else if (input === '2') { // 휴식
       } else if (input === '3') { // 종료
       }
@@ -99,6 +110,12 @@
       event.preventDefault();
       const input = event.target['battle-input'].value;
       if (input === '1') { // 공격
+        const { hero, monster } = this;
+        hero.attack(monster);
+        monster.attack(hero);
+        this.showMessage(`${hero.att}의 데미지를 주고, ${monster.att}의 데미지를 받았다.`);
+        this.updateHeroStat();
+        this.updateMonsterStat();
       } else if (input === '2') { // 회복
       } else if (input === '3') { // 도망
         this.changeScreen('game');
@@ -119,6 +136,21 @@
       $heroHp.textContent = `HP: ${hero.hp}/${hero.maxHp}`;
       $heroXp.textContent = `XP: ${hero.xp}/${15 * hero.lev}`;
       $heroAtt.textContent = `ATT: ${hero.att}`;
+    }
+    updateMonsterStat() {
+      const { monster } = this;
+      if (monster === null) {
+        $monsterName.textContent     = '';
+        $monsterHp.textContent = '';
+        $monsterAtt.textContent = '';
+        return;
+      }
+      $monsterName.textContent = monster.name;
+      $monsterHp.textContent = `HP: ${monster.hp}/${monster.maxHp}`;
+      $monsterAtt.textContent = `ATT: ${monster.att}`;
+    }
+    showMessage(text) {
+      $message.textContent = text;
     }
   }
 
@@ -141,8 +173,10 @@
     }
   }
   class Monster {
-    constructor (name, hp, att, xp){
+    constructor (game, name, hp, att, xp){
+      this.game = game;
       this.name = name;
+      this.maxHp = hp;
       this.hp = hp;
       this.att = att;
       this.xp = xp;
